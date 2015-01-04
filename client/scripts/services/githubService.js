@@ -2,30 +2,22 @@
 'use strict';
 
 var githubService   = {},
-    https           = require('https-browserify'),
+    http            = require('http'),
     Q               = require('q');
 
 
 githubService
 .getOwner = function(ownerName){
 
-  var deferred = Q.defer(),
-      options;
+  var deferred = Q.defer();
 
   if(typeof ownerName !== 'string' || ownerName === ''){
     deferred.reject(new Error('getOwner needs a string as an argument'));
     return deferred.promise;
   }
 
-  options = {
-    hostname: 'api.github.com',
-    port: 443,
-    path: '/users/' + ownerName,
-    method: 'GET'
-  };
-
-  https
-  .request(options, function (res) {
+  http
+  .get('/API/getUser?name=' + ownerName, function(res){
 
     var body = '';
 
@@ -46,9 +38,7 @@ githubService
 
       deferred.resolve(jsonBody);
     });
-
-  })
-  .end();
+});
 
   return deferred.promise;
 };

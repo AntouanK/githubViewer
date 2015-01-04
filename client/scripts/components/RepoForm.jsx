@@ -20,7 +20,7 @@ RepoForm = React.createClass({
     var self = this,
         ownerInput;
 
-    ownerInput = self.getDOMNode().querySelector('[role="owner-name"');
+    ownerInput = self.getDOMNode().querySelector('[role="owner-name"]');
 
     ownerInput
     .onblur = function(){
