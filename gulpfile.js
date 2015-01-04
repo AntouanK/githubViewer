@@ -9,7 +9,7 @@ var gulp          = require('gulp'),
     gulpMinCSS    = require('gulp-minify-css'),
     gulpEslint    = require('gulp-eslint'),
     gulpRename    = require('gulp-rename'),
-    exec          = require('child_process').exec,
+    staticServer  = require('gulp-serve'),
     rimraf        = require('rimraf'),
     path          = require('path'),
     browserify    = require('browserify'),
@@ -18,8 +18,6 @@ var gulp          = require('gulp'),
     runSequence   = require('run-sequence'),
     paths         = {},
     cwd           = process.cwd(),
-    execute,
-    injectGitVersion,
     ENV;
 
 
@@ -33,19 +31,7 @@ paths.htmlFile    = path.join(cwd, 'client', 'index.html');
 
 
 /**********************************************************/
-/** helper functions **/
-execute = function(command, callback){
-  exec(command, function(err, stdout){
-    if(err){
-      throw err;
-    }
-    callback(stdout);
-  });
-};
-
-
 gulp.task('clean.deploy', function(done){
-
   rimraf(paths.deploy, done);
 });
 
@@ -95,6 +81,13 @@ gulp.task('styles', function(){
 
   return stream;
 });
+
+gulp.task('serve', staticServer({
+  root: paths.deploy,
+  port: 4000
+}));
+
+
 
 gulp.task('dev', function(){
 

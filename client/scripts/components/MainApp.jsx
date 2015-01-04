@@ -1,6 +1,7 @@
 
 /** @jsx React.DOM */
 var React         = require('react'),
+    RepoForm      = require('./RepoForm.jsx'),
     MainApp,
     getMainAppState;
 
@@ -37,7 +38,7 @@ MainApp = React.createClass({
 
     return (
       <div className="main-app">
-        bla
+        <RepoForm />
       </div>
     );
   },
