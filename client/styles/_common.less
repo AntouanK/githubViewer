@@ -1,0 +1,59 @@
+
+.text-hide-overflow() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-hide-overflow {
+  .text-hide-overflow();
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.unselectable() {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.box-shadow(@depth) {
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12*@depth), 0 2px 4px rgba(0, 0, 0, 0.24*@depth);
+}
+
+.separate-layer(@z: 0) {
+          transform: translateZ(@z);
+      -ms-transform: translateZ(@z);
+  -webkit-transform: translateZ(@z);
+}
+
+// NOTE : you need -> position: relative;
+.vertical-align() {
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.paper-like() {
+  background-color: white;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+}
+
+.original-link {
+  &:hover {
+    text-decoration: underline;
+  }
+  &:focus {
+    outline: none;
+  }
+}
