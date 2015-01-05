@@ -4,8 +4,25 @@
 @import './_foundation';
 
 // components
+@import './_mainApp';
 @import './_cmpRepoForm';
+@import './_cmpIssue';
 
 body {
   background-color: #ECECEC;
+}
+
+.loader-container {
+
+  position: relative;
+  top: 20px;
+  left: 50%;
+  text-align: center;
+  transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  color: #777;
+
+  .text {
+    margin: 15px 0;
+  }
 }

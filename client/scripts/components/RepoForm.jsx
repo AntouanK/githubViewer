@@ -1,6 +1,7 @@
 
 /** @jsx React.DOM */
 var React         = require('react'),
+    AppActions    = require('../actions/AppActions'),
     githubService = require('../services/githubService'),
     RepoForm,
     getRepoFormState;
@@ -11,7 +12,9 @@ RepoForm = React.createClass({
   getInitialState: function() {
     return {
       formDisabled: true,
-      possibleRepoNames: this.props.possibleRepoNames
+      possibleRepoNames: this.props.possibleRepoNames,
+      ownerName: '',
+      repoName: ''
     };
   },
 
@@ -35,99 +38,106 @@ RepoForm = React.createClass({
 
   findRepoSuggestions: function(ownerName){
 
+    var self = this;
+
     githubService
-    .getOwner(ownerName)
-    .then(function(ownerObj){
-      console.log('ownerObj', ownerObj);
+    .getRepos(ownerName)
+    .then(function(repos){
+
+      var names = 
+      repos
+      .map(function(repo){
+        return repo.name;
+      });
+
+      self.setState({
+        possibleRepoNames: names
+      });
     });
   },
 
   handleOwnerChange: function(ev){
 
-    var owner = ev.target.value;
+    var ownerName = ev.target.value;
 
     //  if there's no owner name set, disable the "search" form
-    if(owner === ''){
+    if(ownerName === ''){
       this.setState({
         formDisabled: true,
-        possibleRepoNames: this.state.possibleRepoNames
+        ownerName: ownerName
       });
       return true;
     }
 
-    console.log(owner);
+    this.setState({
+      ownerName: ownerName
+    });
   },
 
   handleRepoChange: function(ev){
 
-    var repo = ev.target.value;
+    var repoName = ev.target.value;
 
     //  if there's no repo name set, disable the "search" form
-    if(repo === ''){
-      this.setState({
-        formDisabled: true,
-        possibleRepoNames: this.state.possibleRepoNames
-      });
-      return true;
-    }
-    //  else
     this.setState({
-      formDisabled: false,
-      possibleRepoNames: this.state.possibleRepoNames
+      formDisabled: repoName === '',
+      repoName: repoName
     });
-
   },
 
   submitForm: function(){
-    console.log('submit');
+    AppActions.searchForRepo(this.state.ownerName, this.state.repoName);
+    AppActions.setVisibleRepo(this.state.ownerName, this.state.repoName);
   },
 
   render: function() {
 
     var self = this,
-        repoAutocomplete;
+        repoAutocomplete,
+        repoSuggestions,
+        repoNameListId = 'repo-name-'+Date.now();
 
-    if(this.state.possibleRepoNames === undefined){
+    if(self.state.possibleRepoNames === undefined){
       repoAutocomplete = '';
     } else {
+      repoSuggestions = self.state.possibleRepoNames
+      .map(function(repoName){
+        return '<option value="'+repoName+'" />';
+      })
+      .join('');
+
       repoAutocomplete = (
-        <datalist id="browsers">
-          <option value="Chrome" />
-          <option value="Firefox" />
-          <option value="Internet Explorer" />
-          <option value="Opera" />
-          <option value="Safari" />
-        </datalist>
+        '<datalist id="'+repoNameListId+'">' + repoSuggestions +
+        '</datalist>'
       );
     }
 
 
     return (
-      <div className="cmp-repo-form">
-        <div className="row">
-          <div className="small-12 medium-5 columns">
-            <span>Owner </span>
-            <input
-              role="owner-name"
-              type="text"
-              onChange={this.handleOwnerChange} />
-          </div>
-          <div className="small-12 medium-5 columns">
-            <span>Repo </span>
-            <input
-              role="repo-name"
-              type="text"
-              onChange={this.handleRepoChange} />
-              {repoAutocomplete}
-          </div>
-          <div className="small-12 medium-2 columns">
-            <button
-              type="button"
-              disabled={this.state.formDisabled}
-              onClick={this.submitForm}>
-              Search
-            </button>
-          </div>
+      <div className="cmp-repo-form row">
+        <div className="small-12 medium-5 columns">
+          <span>Owner </span>
+          <input
+            role="owner-name"
+            type="text"
+            onChange={self.handleOwnerChange} />
+        </div>
+        <div className="small-12 medium-5 columns">
+          <span>Repo </span>
+          <input
+            role="repo-name"
+            list={repoNameListId}
+            type="text"
+            onChange={self.handleRepoChange} />
+          <span dangerouslySetInnerHTML={{ __html: repoAutocomplete }}></span>
+        </div>
+        <div className="small-12 medium-2 columns">
+          <button
+            type="button"
+            disabled={self.state.formDisabled}
+            onClick={self.submitForm}>
+            Search
+          </button>
         </div>
       </div>
     );
